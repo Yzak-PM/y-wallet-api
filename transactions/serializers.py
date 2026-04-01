@@ -69,6 +69,7 @@ class TagBriefSerializer(serializers.Serializer):
 
 class TransactionReadSerializer(serializers.ModelSerializer):
     account_name = serializers.CharField(source="account.name", read_only=True)
+    account_color = serializers.CharField(source="account.color", read_only=True)
     destination_account_name = serializers.CharField(
         source="destination_account.name",
         read_only=True,
@@ -76,6 +77,8 @@ class TransactionReadSerializer(serializers.ModelSerializer):
         default=None
     )
     category_title = serializers.CharField(source="category.title", read_only=True)
+    category_icon = serializers.CharField(source="category.icon", read_only=True)
+    category_color = serializers.CharField(source="category.color", read_only=True)
     tags = TagBriefSerializer(many=True, read_only=True)
 
     class Meta:
@@ -87,10 +90,13 @@ class TransactionReadSerializer(serializers.ModelSerializer):
             "description",
             "account",
             "account_name",
+            "account_color",
             "destination_account",
             "destination_account_name",
             "category",
             "category_title",
+            "category_icon",
+            "category_color",
             "tags",
             "type"
         ]

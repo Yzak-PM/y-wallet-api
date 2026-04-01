@@ -17,7 +17,7 @@ class Category(BaseSoftDeleteModel):
     title = models.CharField(max_length=75)
     description = models.TextField(blank=True)
     color = models.CharField(max_length=7, default="#C90F0F")
-    icon = models.CharField(max_length=100, default="")
+    icon = models.CharField(max_length=10, default="🏷️")
 
     class Meta: 
         unique_together = ("user", "title")
