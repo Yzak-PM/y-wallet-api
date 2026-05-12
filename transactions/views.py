@@ -18,7 +18,26 @@ class TransactionViewSet(viewsets.ModelViewSet):
         if user.is_superuser:
             return queryset
 
-        return queryset.filter(user=user)
+        #Date range filter
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+
+        tx_type = self.request.query_params.get("type")          # income | expense | movement
+        account = self.request.query_params.get("account")       # account id
+        category = self.request.query_params.get("category")     # category id
+
+        if start_date:
+            queryset = queryset.filter(date__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(date__lte=end_date)
+        if tx_type:
+            queryset = queryset.filter(type=tx_type)
+        if account:
+            queryset = queryset.filter(account_id=account)
+        if category:
+            queryset = queryset.filter(category_id=category)
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:

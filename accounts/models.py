@@ -25,3 +25,6 @@ class Account(BaseSoftDeleteModel):
     nature = models.CharField(max_length=10, choices=Nature.choices)
     color = models.CharField(max_length=7, default="#B88BFD")
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    def __str__(self):
+        return self.name

@@ -44,7 +44,7 @@ def get_income_and_expense_by_date_range(user, start_date, end_date):
         'expense': expense
     }
 
-def get_expenses_by_category(user, start_date=None, end_date=None):
+def get_expenses_by_category(user, start_date=None, end_date=None, category=None):
     transactions = Transaction.objects.filter(
         user=user,
         type=Transaction.Type.EXPENSE
@@ -55,11 +55,23 @@ def get_expenses_by_category(user, start_date=None, end_date=None):
             date__range=[start_date, end_date]
         )
 
+    if category:
+        transactions = transactions.filter(
+            category__id = category
+        )
+
     result = (
         transactions
-        .values('category__id', 'category__title')
+        .values('category__id', 'category__title', 'category__color')
         .annotate(total=Sum('amount'))
         .order_by('-total')
     )
 
-    return result
+    return [ # Retorna los resultados limpiados para el frontend
+        {
+            "category": item['category__title'], 
+            "total": float(item['total']),
+            "color": item['category__color']
+        }
+        for item in result
+    ]

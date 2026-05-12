@@ -3,4 +3,7 @@ from .models import Category
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("id", "title", "user", "type")
+    list_filter = ("type",)
+    search_fields = ("title", "user")
+    ordering = ("title",)

@@ -38,24 +38,25 @@ class FinanceViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"])
     def expenses_by_category(self, request):
-        start_date, end_date, error = self._parse_date_range(request, required=False)
+        start_date, end_date, category, error = self._parse_date_range(request, required=False)
         if error:
             return Response({"detail": error}, status=status.HTTP_400_BAD_REQUEST)
 
-        data = get_expenses_by_category(request.user, start_date, end_date)
+        data = get_expenses_by_category(request.user, start_date, end_date, category)
         return Response(data)
 
     def _parse_date_range(self, request, required=True):
         start_str = request.query_params.get("start_date")
         end_str = request.query_params.get("end_date")
+        category = request.query_params.get("category") or None
 
         if required and not (start_str and end_str):
-            return None, None, "start_date y end_date son requeridos."
+            return None, None, None, "start_date y end_date son requeridos."
 
         try:
             start_date = datetime.strptime(start_str, "%Y-%m-%d").date() if start_str else None
             end_date = datetime.strptime(end_str, "%Y-%m-%d").date() if end_str else None
         except ValueError:
-            return None, None, "Formato de fecha inválido. Usa YYYY-MM-DD."
+            return None, None, None, "Formato de fecha inválido. Usa YYYY-MM-DD."
 
-        return start_date, end_date, None
+        return start_date, end_date, category, None
