@@ -43,3 +43,15 @@ class UserViewSet(viewsets.ModelViewSet):
         user.save()
 
         return Response({"status": "User Inactivated"})
+    
+    @action(['GET', 'PUT', 'PATCH'], detail=False, url_path='me')
+    def me(self, request):
+        if request.method == 'GET':
+            serializer = self.get_serializer(request.user)
+            return Response(serializer.data)
+    
+        partial = request.method == 'PATCH'
+        serializer = self.get_serializer(request.user, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

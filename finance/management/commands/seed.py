@@ -4,6 +4,7 @@ from accounts.models import Account
 from categories.models import Category
 from tags.models import Tag
 from transactions.models import Transaction
+from django.db import transaction
 from faker import Faker
 from decimal import Decimal
 import random
@@ -27,11 +28,12 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write("Cleaning database...")
 
-        Transaction.objects.all().delete()
-        Account.objects.all().delete()
-        Category.objects.all().delete()
-        Tag.objects.all().delete()
-        User.objects.all().delete()
+        with transaction.atomic():
+            Transaction.objects.all().delete()
+            Tag.objects.all().delete()
+            Category.objects.all().delete()
+            Account.objects.all().delete()
+            User.objects.all().delete()
 
         self.stdout.write("Database cleaned.")
 
@@ -102,23 +104,22 @@ class Command(BaseCommand):
 
             # 🔹 Create tags
             tag_configs = [
-                ("deductible",   "#4CAF50", "receipt"),
-                ("urgent",       "#F44336", "alert-circle"),
-                ("recurring",    "#2196F3", "refresh-cw"),
-                ("work",         "#9C27B0", "briefcase"),
-                ("family",       "#FF9800", "home"),
-                ("travel",       "#00BCD4", "plane"),
-                ("subscription", "#607D8B", "credit-card"),
-                ("savings-goal", "#8BC34A", "target"),
+                ("deductible",   "#4CAF50"),
+                ("urgent",       "#F44336"),
+                ("recurring",    "#2196F3"),
+                ("work",         "#9C27B0"),
+                ("family",       "#FF9800"),
+                ("travel",       "#00BCD4"),
+                ("subscription", "#607D8B"),
+                ("savings-goal", "#8BC34A"),
             ]
 
             tags = []
-            for name, color, icon in tag_configs:
+            for name, color in tag_configs:
                 tag = Tag.objects.create(
                     user=user,
                     name=name,
-                    color=color,
-                    icon=icon
+                    color=color
                 )
                 tags.append(tag)
             self.stdout.write(f"Tags created for {user.username}")
