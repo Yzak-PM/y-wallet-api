@@ -1,7 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import ValidationError
 from .serializers import AccountSerializer
 from .models import Account
+from decimal import Decimal
 
 class AccountViewSet(viewsets.ModelViewSet):
     """
@@ -22,4 +24,12 @@ class AccountViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-        
+
+    def destroy(self, request, *args, **kwargs):
+        account = self.get_object()
+
+        if account.balance != Decimal("0"):
+            raise ValidationError(
+                {"detail": "Cannot delete an account with a non-zero balance."}
+            ) 
+        return super().destroy(request, *args, **kwargs)
