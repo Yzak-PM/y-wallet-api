@@ -19,7 +19,7 @@ class AccountViewSet(viewsets.ModelViewSet):
         if user.is_superuser:
             return Account.objects.all()
         
-        #* Normal users can only see their own accounts
+        #* Normal users can only see their own accounts.
         return Account.objects.filter(user=user)
     
     def perform_create(self, serializer):
