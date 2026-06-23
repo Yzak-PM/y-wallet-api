@@ -48,16 +48,20 @@ class TransactionViewSet(viewsets.ModelViewSet):
         account = transaction.account
         amount = transaction.amount
 
-        # Pago de deuda: asset → liability
+        # Movement
         if transaction.destination_account:
             dest = transaction.destination_account
+            if dest.nature == "asset":
+                dest.balance += amount
+            else:
+                dest.balance -= amount
+            
             account.balance -= amount      # sale dinero del asset
-            dest.balance -= amount         # baja la deuda en el liability
             account.save()
             dest.save()
             return
 
-        # Transacción simple según nature
+        # Transacción simple según nature (gasto normal)
         if account.nature == "asset":
             if transaction.type == Transaction.Type.INCOME:
                 account.balance += amount
