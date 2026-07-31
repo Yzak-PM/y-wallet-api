@@ -161,7 +161,12 @@ SIMPLE_JWT = {
 }
 
 # En desarrollo permite tu puerto de Next.js
-CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://y-wallet-web.vercel.app",
+    "https://yzak.dev",
+    "https://www.yzak.dev",
+]
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "http://localhost:3000").split(",")
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
